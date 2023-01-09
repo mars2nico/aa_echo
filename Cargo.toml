@@ -1,8 +1,8 @@
 [package]
 name = "aa_echo"
 version = "0.1.0"
-authors = ["Masanori Misono <m.misono760@gmail.com>"]
-edition = "2018"
+authors = ["Daichi Misaka <misaka6085@gmail.com>"]
+edition = "2021"
 
 [[bin]]
 name = "echo"
@@ -13,8 +13,8 @@ name = "thread_echo"
 path = "src/thread_echo.rs"
 
 [[bin]]
-name = "epoll_echo"
-path = "src/epoll_echo.rs"
+name = "mio_echo"
+path = "src/mio_echo.rs"
 
 [[bin]]
 name = "aa_echo"
@@ -22,7 +22,11 @@ path = "src/aa_echo.rs"
 
 [dependencies]
 libc = "0.2"
-lazy_static = "1.4.0"
-futures-preview = "=0.3.0-alpha.18"
-log = "0.4"
-env_logger = "0.7.0"
+
+[dependencies.tokio]
+version = "1.24.1"
+features = ["full"]
+
+[dependencies.mio]
+version = "0.8.5"
+features = ["os-poll", "net"]
