@@ -17,7 +17,7 @@ async fn handle_client(mut stream: TcpStream) -> io::Result<()> {
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 1)]
-async fn main() -> io::Result<()> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let listner = TcpListener::bind("127.0.0.1:8080").await?;
 
     while let Ok((stream, _)) = listner.accept().await {

@@ -12,7 +12,7 @@ fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         if n == 0 {
             break;
         }
-        stream.write(buf[..n].as_ref())?;
+        stream.write(&buf[..n])?;
     }
     Ok(())
 }
@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for stream in listner.incoming() {
         let stream = stream?;
         std::thread::spawn(move || {
-            handle_client(stream).unwrap();
+            handle_client(stream)
         });
     }
 

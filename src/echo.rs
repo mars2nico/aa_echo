@@ -12,7 +12,7 @@ fn handle_client(mut stream: TcpStream) -> io::Result<()> {
         if n == 0 {
             break;
         }
-        stream.write(buf[..n].as_ref())?;
+        stream.write(&buf[..n])?;
     }
     Ok(())
 }

@@ -20,7 +20,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut listner = TcpListener::bind("127.0.0.1:8080".parse()?)?;
     let mut clients: HashMap<usize, ClientState> = HashMap::new();
 
-    poll.registry().register(&mut listner, SERVER, Interest::READABLE)?;
+    poll.registry()
+        .register(&mut listner, SERVER, Interest::READABLE)?;
 
     loop {
         poll.poll(&mut events, None)?;
@@ -32,13 +33,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let (mut client, addr) = listner.accept()?;
 
                     // *CAUTION* This is ad-hoc code to make a token by the `port` then
-                    //           have not considered for ordinary usecase.
+                    //           have not considered for regular usecases.
                     let t = addr.port().into();
 
-                    // *NOTE* The method reregistering each `Interest::*` doesnot work for some reason, so
-                    //        modify initially set both; `READABLE` and `WRITABLE`.
                     poll.registry()
-                        .register(&mut client, Token(t), Interest::READABLE | Interest::WRITABLE)?;
+                        .register(&mut client, Token(t), Interest::READABLE)?;
                     clients.insert(
                         t,
                         ClientState {
@@ -56,9 +55,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             if client_state.buf_cursor == 0 {
                                 break;
                             }
+                            poll.registry()
+                                .reregister(&mut client_state.stream, Token(t), Interest::WRITABLE)?;
                         }
                         if event.is_writable() {
                             client_state.stream.write(client_state.buf[..client_state.buf_cursor].as_ref())?;
+                            poll.registry()
+                                .reregister(&mut client_state.stream, Token(t), Interest::READABLE)?;
                         }
                     }
                 }
